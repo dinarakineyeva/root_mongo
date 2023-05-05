@@ -41,3 +41,9 @@ module "atlas_cluster" {
   google_compute_address      = var.google_compute_address
   google_compute_address_type = var.google_compute_address_type
 }
+
+
+resource "google_compute_address" "mongo_address" {
+  name   = "mongo-address"
+  region = var.gcp_region
+}

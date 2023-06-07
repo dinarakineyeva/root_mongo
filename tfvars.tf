@@ -3,8 +3,8 @@
 ######################################
 gcp_project_id = "triple-acre-388315"
 mongo_project_id      = "64779263a0390527428ccb1f"
-mongo_public_key      = "vwruubsz"
-mongo_private_key     = "731ddc21-e4b9-4fb3-a93e-9341ff08efa2"
+mongo_public_key      = "cfzxderr"
+mongo_private_key     = "6c90d964-f163-4e38-92f2-f86f96e677e3"
 gcp_region            = "us-central1"
 cloud_provider        = "GCP"
 mongo_cluster_name    = "test-cluster-m"
@@ -20,10 +20,26 @@ advanced_configuration = {
 }
 mongo_cluster_size    = "M10"
 num_shards            = 1
-mongo_cluster_region  = "CENTRAL_US"
-electable_nodes       = 3
-priority              = 7
-read_only_nodes       = 0
+regions_config = [
+    {
+      region_name  = "CENTRAL_US"
+      electable_nodes       = 3
+      priority              = 7
+      read_only_nodes       = 0
+    },
+    {
+      region_name     = "EASTERN_US"
+      electable_nodes = 2
+      priority        = 6
+      read_only_nodes = 0
+    },
+    {
+      region_name     = "WESTERN_US"
+      electable_nodes = 2
+      priority        = 5
+      read_only_nodes = 2
+    }
+]
 db_username           = "devuser"
 db_password           = "user"
 auth_database_name    = "admin"

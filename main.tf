@@ -23,10 +23,7 @@ module "atlas_cluster" {
 
   # ==== replication_specs for the cluster ==== #
   num_shards      = var.num_shards
-  region_name     = var.mongo_cluster_region
-  electable_nodes = var.electable_nodes
-  priority        = var.priority
-  read_only_nodes = var.read_only_nodes
+  regions_config  = var.regions_config
 
   # ==== Database user ==== # 
   db_username        = var.db_username

@@ -13,12 +13,12 @@ terraform {
 
 provider "google-beta" {
   project     = var.project_id
-  credentials = file("cred.json")
+  credentials = file("creds.json")
 }
 
 provider "google" {
   project     = var.gcp_project_id
-  credentials = file("cred.json")
+  credentials = file("creds.json")
 }
 
 provider "mongodbatlas" {

@@ -9,6 +9,11 @@ terraform {
     }
   }
   required_version = ">= 0.13"
+  backend "gcs" {
+    bucket      = "mongo-backend"
+    prefix      = "terraform/mongo/env/dev/statatat"
+    credentials = "./creds.json"
+  }
 }
 
 provider "google-beta" {

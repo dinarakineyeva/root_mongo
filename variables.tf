@@ -44,7 +44,7 @@ variable "cloud_provider" {
 }
 
 variable "mongo_cluster_name" {
-  type        = string
+  default     = []
   description = "The name of the MongoDB Atlas cluster. This variable is used to specify the name of the MongoDB Atlas cluster."
 }
 
@@ -85,43 +85,24 @@ variable "regions_config" {
     priority        = number
     read_only_nodes = number
   }))
-  default = [
-    {
-      region_name  = "CENTRAL_US"
-      electable_nodes       = 3
-      priority              = 7
-      read_only_nodes       = 0
-    },
-    {
-      region_name     = "EASTERN_US"
-      electable_nodes = 2
-      priority        = 6
-      read_only_nodes = 0
-    },
-    {
-      region_name     = "WESTERN_US"
-      electable_nodes = 2
-      priority        = 5
-      read_only_nodes = 2
-    }
-  ]
+  default = []
 }
 variable "termination_protection_enabled" {
-  type = bool  
+  type        = bool
   description = "Indicates whether termination protection is enabled for the cluster. This variable is used to enable or disable termination protection for the MongoDB Atlas cluster."
 }
 
 variable "advanced_configuration" {
   description = "Advanced configuration options for the MongoDB Atlas cluster. This variable is used to specify advanced configuration options as an object. 'Javascript_enabled' - (Optional) When true, the cluster allows execution of operations that perform server-side executions of JavaScript. When false, the cluster disables execution of those operations. 'minimum_enabled_tls_protocol' - (Optional) Sets the minimum Transport Layer Security (TLS) version the cluster accepts for incoming connections."
   type = object({
-    javascript_enabled = bool
+    javascript_enabled           = bool
     minimum_enabled_tls_protocol = string
-    oplog_min_retention_hours = number
+    oplog_min_retention_hours    = number
   })
   default = {
-    javascript_enabled = false
+    javascript_enabled           = false
     minimum_enabled_tls_protocol = "TLS1_2"
-    oplog_min_retention_hours = 24
+    oplog_min_retention_hours    = 24
   }
 }
 
@@ -155,13 +136,23 @@ variable "database_name" {
 }
 
 variable "db_key" {
-  type        = string 
+  type        = string
   description = "Containing key-value pairs that tag and categorize the database user. Each key and value has a maximum length of 255 characters.The key that you want to write."
 }
 
 variable "db_value" {
   type        = string
   description = "Containing key-value pairs that tag and categorize the database user. Each key and value has a maximum length of 255 characters.The value that you want to write."
+}
+
+variable "description" {
+  type        = string
+  description = "(Required) Description of the on-demand snapshot."
+}
+
+variable "retention_in_days" {
+  type        = number
+  description = " (Required) The number of days that Atlas should retain the on-demand snapshot. Must be at least 1."
 }
 
 ###############################################

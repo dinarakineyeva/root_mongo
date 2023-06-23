@@ -5,12 +5,14 @@ variable "gcp_project_id" {
   type        = string
   description = "The project ID for the Google Cloud Platform (GCP) project. This variable is used to specify the project ID of the GCP project."
 }
-
-variable "mongo_project_id" {
+variable "org_id" {
   type        = string
-  description = "The project ID for MongoDB Atlas. This variable is used to specify the project ID of the MongoDB Atlas project."
+  description = "MongoDB Organization ID"
 }
-
+variable "project_name" {
+  type        = string
+  description = "The MongoDB Atlas Project Name"
+}
 variable "mongo_public_key" {
   type        = string
   description = "(Optional) This is the public key of your MongoDB Atlas API key pair."
@@ -25,14 +27,11 @@ variable "gcp_region" {
   type        = string
   description = "GCP Region"
 }
-
-variable "network_name" {
+variable "environment" {
+  type        = string
   description = "value"
 }
 
-variable "subnet_name" {
-  description = "value"
-}
 
 variable "compute_address_name" {
   description = "value"

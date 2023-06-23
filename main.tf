@@ -2,15 +2,15 @@
 ########## MONGO DB ATLAS #############
 #######################################
 module "atlas_cluster" {
-  source           = "../child_module"
-  project_id_mongo = var.mongo_project_id
-
+  source = "../child_module"
+  org_id = var.org_id
 
   # ==== Private link ==== #
   gcp_project = var.gcp_project_id
   gcp_region  = var.gcp_region
 
   # ==== Atlas cluster ==== #
+  project_name                   = var.project_name
   cloud_provider                 = var.cloud_provider
   cluster_name                   = var.mongo_cluster_name
   mongodbversion                 = var.mongo_cluster_version
@@ -43,7 +43,6 @@ module "atlas_cluster" {
 
   google_compute_address      = var.google_compute_address
   google_compute_address_type = var.google_compute_address_type
-  network_name                = var.network_name
-  subnet_name                 = var.subnet_name
+  environment                 = var.environment
   compute_address_name        = var.compute_address_name
 }

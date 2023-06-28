@@ -10,8 +10,8 @@ terraform {
   }
   required_version = ">= 0.13"
   backend "gcs" {
-    bucket      = "mongo-backend"
-    prefix      = "terraform/mongo/env/dev/statatat"
+    bucket      = "mongo-dev-backend"
+    prefix      = "terraform/mongo/env/dev/stat"
     credentials = "./creds.json"
   }
 }

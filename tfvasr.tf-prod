@@ -1,13 +1,14 @@
 ######################################
 ########## MONGO DB ATLAS ############
 ######################################
-gcp_project_id                 = "elaborate-hash-385117"
-mongo_project_id               = "644f9fdd9493d7067ccbcd74"
-mongo_public_key               = "snjevltv"
-mongo_private_key              = "a10b55da-105f-4f02-97ed-9349baf17668"
-gcp_region                     = "us-central1"
+gcp_project_id                 = "prefab-botany-390816"
+org_id                         = "6477921d16b43c0b9c1e70ca"
+project_name                   = "project"
+mongo_public_key               = "zrnydnyk"
+mongo_private_key              = "1a0cf254-d9bd-4687-9d9e-1119dfd4cd58"
+gcp_region                     = "us-east1"
 cloud_provider                 = "GCP"
-mongo_cluster_name             = ["test-cluster-a", "test-cluster-b", "test-cluster-c"]
+mongo_cluster_name             = ["cluster-a", "cluster-b", "cluster-c"]
 mongo_cluster_version          = "6.0"
 mongo_cluster_type             = "REPLICASET"
 cloud_backup                   = true
@@ -51,6 +52,5 @@ description                 = "prod-snapshot"
 retention_in_days           = 1
 google_compute_address      = "10.0.42."
 google_compute_address_type = "INTERNAL"
-network_name                = "prod-newtork"
-subnet_name                 = "prod-subnet"
+environment                 = "prod"
 compute_address_name        = "prod-mongo"

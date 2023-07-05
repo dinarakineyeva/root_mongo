@@ -1,36 +1,109 @@
-######################################
-########## MONGO DB ATLAS ############
-######################################
-gcp_project_id        = "elaborate-hash-385117"
-mongo_project_id      = "644fa96ebff4ee115f6d7642"
-mongo_public_key      = "snjevltv"
-mongo_private_key     = "a10b55da-105f-4f02-97ed-9349baf17668"
-gcp_region            = "us-central1"
-cloud_provider        = "GCP"
-mongo_cluster_name    = "test-cluster-sandbox"
-mongo_cluster_version = "6.0"
-mongo_cluster_type    = "REPLICASET"
-cloud_backup          = true
-autoscaling           = true
-mongo_cluster_size    = "M0"
-num_shards            = 1
-regions_config = [
-  {
-    region_name     = "CENTRAL_US"
-    electable_nodes = 3
-    priority        = 7
-    read_only_nodes = 0
-  }
-]
-db_username                 = "sandboxuser"
-db_password                 = "sandboxuser"
-auth_database_name          = "admin"
-db_role_name                = "readWriteAnyDatabase"
-database_name               = "admin"
-db_key                      = "key"
-db_value                    = "value"
-google_compute_address      = "10.0.42."
-google_compute_address_type = "INTERNAL"
-network_name                = "sandbox-newtork"
-subnet_name                 = "sandbox-subnet"
-compute_address_name        = "sandbox-mongo"
+Technical Design Documentation: MongoDB Atlas Cloud Backup Configuration
+
+1. Introduction:
+This technical design document outlines the configuration of MongoDB Atlas Cloud Backup using Terraform. The infrastructure code provisions a backup schedule and snapshot for a MongoDB cluster in the MongoDB Atlas cloud environment.
+
+2. Prerequisites:
+To successfully implement this configuration, ensure the following:
+- Access to a MongoDB Atlas account.
+- Terraform installed on the local machine.
+- Proper authentication and permissions for interacting with the MongoDB Atlas API.
+
+3. Terraform Resources:
+This design utilizes two Terraform resources:
+- `mongodbatlas_cloud_backup_schedule`: Configures the backup schedule for the MongoDB cluster.
+- `mongodbatlas_cloud_backup_snapshot`: Configures a backup snapshot for the MongoDB cluster.
+
+4. `mongodbatlas_cloud_backup_schedule` Resource:
+- `count`: Determines if the backup schedule should be created based on the `var.mongodb_enabled` variable. If `mongodb_enabled` is true, one backup schedule will be created; otherwise, it will not be created.
+- `project_id`: Specifies the ID of the MongoDB Atlas project to which the cluster belongs. It references the `mongodbatlas_cluster.cluster` resource.
+- `cluster_name`: Specifies the name of the MongoDB cluster. It references the `mongodbatlas_cluster.cluster` resource.
+- `reference_hour_of_day` and `reference_minute_of_hour`: Sets the time at which the backup schedule triggers. In this case, the backup will occur at 3:45 AM.
+- `restore_window_days`: Defines the number of days within which the backups are eligible for restoration.
+
+The following policy items are added to the `mongodbatlas_cloud_backup_schedule` resource:
+- `policy_item_daily`: Sets up a daily backup with a retention period of 2 days.
+- `frequency_interval`: Indicates the backup frequency in days.
+- `retention_unit`: Specifies the unit of retention (in this case, "days").
+- `retention_value`: Sets the number of days for which the backups are retained.
+
+- `policy_item_weekly`: Configures a weekly backup on Thursdays with a retention period of 3 weeks.
+- `frequency_interval`: Indicates the backup frequency on a particular day of the week (4 represents Thursday).
+- `retention_unit`: Specifies the unit of retention (in this case, "weeks").
+- `retention_value`: Sets the number of weeks for which the backups are retained.
+
+- `depends_on`: Specifies that the creation of the backup schedule depends on the completion of the `mongodbatlas_cluster.cluster` resource.
+
+5. `mongodbatlas_cloud_backup_snapshot` Resource:
+- `project_id`: Specifies the ID of the MongoDB Atlas project to which the cluster belongs. It references the `mongodbatlas_cluster.cluster` resource.
+- `cluster_name`: Specifies the name of the MongoDB cluster. It references the `mongodbatlas_cluster.cluster` resource.
+- `description`: Provides an optional description for the backup snapshot. It references the `var.description` variable.
+- `retention_in_days`: Sets the number of days for which the backup snapshot will be retained. It references the `var.retention_in_days` variable.
+
+6. Workflow:
+When executed, Terraform will create the specified backup schedule and snapshot for the MongoDB cluster in MongoDB Atlas. The backup schedule will include daily and weekly backups with their respective retention periods. The snapshot will have a defined retention period as well.
+
+
+
+
+
+
+Technical Design Documentation: Google Cloud KMS Configuration for MongoDB Atlas Encryption at Rest
+
+1. Introduction:
+This technical design document outlines the configuration of Google Cloud Key Management Service (KMS) for MongoDB Atlas Encryption at Rest using Terraform. The infrastructure code provisions a service account, creates a key ring and crypto key in Google Cloud KMS, and configures MongoDB Atlas to use the encryption at rest feature with Google Cloud KMS.
+
+2. Prerequisites:
+To successfully implement this configuration, ensure the following:
+- Access to a Google Cloud Platform (GCP) project.
+- Terraform installed on the local machine.
+- Proper authentication and permissions for interacting with the Google Cloud Platform API.
+
+3. Terraform Resources:
+This design utilizes several Terraform resources:
+- `google_service_account`: Creates a service account for encryption at rest in MongoDB Atlas.
+- `google_project_iam_member`: Assigns IAM roles to the service account.
+- `google_service_account_key`: Creates a key for the service account.
+- `google_kms_key_ring`: Creates a key ring in Google Cloud KMS.
+- `google_kms_crypto_key`: Creates a crypto key within the key ring.
+- `mongodbatlas_encryption_at_rest`: Configures MongoDB Atlas to use encryption at rest with Google Cloud KMS.
+
+4. Service Account for KMS:
+- `google_service_account`: Creates a service account with a name generated using the MongoDB cluster's name and a prefix. The account ID is limited to 25 characters.
+- `display_name`: Sets a display name for the service account.
+
+5. Assigning IAM Roles:
+- `google_project_iam_member`: Assigns three IAM roles to the service account:
+  - `roles/cloudkms.admin`: Provides administrative access to Google Cloud KMS.
+  - `roles/cloudkms.cryptoKeyEncrypterDecrypter`: Allows the service account to encrypt and decrypt crypto keys in Google Cloud KMS.
+  - `roles/owner`: Grants full ownership access to the GCP project.
+
+6. Creating Service Account Key:
+- `google_service_account_key`: Creates a service account key for the previously created service account.
+- `public_key_type`: Specifies the type of the public key file.
+
+7. Creating Key Ring and Crypto Key:
+- `google_kms_key_ring`: Creates a key ring in Google Cloud KMS. The name is generated using a random hexadecimal ID.
+- `name`: Specifies the name of the key ring.
+- `location`: Sets the location of the key ring to "global".
+
+- `google_kms_crypto_key`: Creates a crypto key within the key ring.
+- `name`: Specifies the name of the crypto key, using a random hexadecimal ID.
+- `key_ring`: References the ID of the key ring created above.
+
+8. Atlas Encryption at Rest Configuration:
+- `mongodbatlas_encryption_at_rest`: Configures MongoDB Atlas to use encryption at rest with Google Cloud KMS.
+- `project_id`: Specifies the ID of the MongoDB Atlas project.
+- `google_cloud_kms_config`:
+  - `enabled`: Enables encryption at rest with Google Cloud KMS.
+  - `service_account_key`: Decodes and provides the private key of the service account.
+  - `key_version_resource_id`: Specifies the resource ID of the crypto key and sets the version to 1.
+
+9. Random ID Generation:
+- `random_id`: Generates random IDs for the names of the key ring and crypto key.
+- `keepers`: Uses the current timestamp as the keeper to regenerate the random ID when the timestamp changes.
+- `byte_length`: Sets the length of the random byte sequence generated by the resource.
+
+
+10. Workflow:
+When executed, Terraform will create a service account, assign IAM roles, create a key ring and crypto key in Google Cloud KMS, and configure MongoDB Atlas to use encryption at rest with Google Cloud KMS.

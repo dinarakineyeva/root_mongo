@@ -107,3 +107,23 @@ This design utilizes several Terraform resources:
 
 10. Workflow:
 When executed, Terraform will create a service account, assign IAM roles, create a key ring and crypto key in Google Cloud KMS, and configure MongoDB Atlas to use encryption at rest with Google Cloud KMS.
+
+
+Encryption at rest is a security measure that ensures data stored in a database or file system is encrypted, providing an additional layer of protection against unauthorized access. In this case, the encryption at rest is implemented using Google Cloud Key Management Service (KMS) and integrated with the Atlas project.
+
+Key Management Service (KMS): Google Cloud KMS is a managed service that allows you to generate, use, and manage cryptographic keys securely. It provides a central repository for managing encryption keys and performs cryptographic operations, such as encryption and decryption, using these keys.
+
+Service Account: A service account is created specifically for managing encryption at rest in the Atlas project. A service account is an identity that represents a non-human entity (in this case, the encryption process) and is used to authenticate and authorize actions performed on behalf of the service. The service account is granted the necessary permissions and roles in Google Cloud IAM to interact with KMS and perform encryption and decryption operations.
+
+Keyring and Crypto Key: A keyring is created within Google Cloud KMS to act as a logical container for cryptographic keys. The keyring is associated with the Atlas project. Within the keyring, a cryptographic key is generated, which is used for encrypting and decrypting the data at rest. This key is securely managed by KMS and protected by the service account's permissions.
+
+Integration with Atlas: The Atlas project is configured to enable encryption at rest using the Google Cloud KMS integration. The Atlas service integrates with KMS by providing the necessary configuration parameters.
+
+Enabled: This setting indicates that encryption at rest is enabled for the Atlas project.
+Service Account Key: The private key of the service account created earlier is provided to Atlas. This key is used to authenticate the service account when interacting with KMS and performing encryption and decryption operations.
+Key Version Resource ID: This identifies the specific version of the cryptographic key to be used for encryption and decryption. In this case, the first version of the key created in the keyring is selected.
+When data is stored in Atlas, it goes through the encryption process before being written to disk. The data is encrypted using the cryptographic key managed by Google Cloud KMS. This process converts the plain text data into an unreadable, encrypted form using industry-standard encryption algorithms. The encrypted data is then stored in the underlying storage system.
+
+When data needs to be accessed or retrieved from Atlas, the decryption process takes place. The encrypted data is retrieved from storage and passed to Google Cloud KMS along with the appropriate key and version. KMS performs the decryption operation using the corresponding key and returns the decrypted data to Atlas, which can then provide the data in its original, readable format to the authorized user or application.
+
+By integrating with Google Cloud KMS, Atlas ensures that data at rest is protected with strong encryption and that the encryption keys are securely managed by Google's infrastructure. This helps safeguard sensitive data from unauthorized access, even in the event of physical storage compromise or unauthorized access to the underlying infrastructure.
